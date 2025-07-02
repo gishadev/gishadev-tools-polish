@@ -1,0 +1,17 @@
+{
+  "name": "com.gishadev.gishadev-tools-polish",
+  "version": "1.0.0",
+  "displayName": "Gishadev Tools Polish",
+  "description": "Tools to polish your game. Audio, Effects and a lot of other stuff!",
+  "unity": "6000.0",
+  "dependencies":{
+	  "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+	  "com.kyrylokuzyk.primetween": "file:../Assets/Plugins/PrimeTween/internal/com.kyrylokuzyk.primetween.tgz",
+	  "com.unity.cinemachine": "3.1.4",
+	  "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.16.9"
+  },
+  "author": {
+    "name": "Bohdan Tsaplia",
+    "url": "https://gishadev.com/"
+  }
+}
