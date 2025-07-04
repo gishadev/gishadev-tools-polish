@@ -1,6 +1,7 @@
 using System;
 using gishadev.tools.Core;
 using UnityEditor;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace gishadev.tools.Generative
@@ -15,6 +16,8 @@ namespace gishadev.tools.Generative
                 var asset = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
                 if (asset != null)
                 {
+                    Debug.Log(asset.name);
+
                     if (asset.name.Contains("gishadev-tools-polish"))
                     {
                         string[] enumValues = Array.Empty<string>();
