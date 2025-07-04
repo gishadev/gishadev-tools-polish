@@ -13,15 +13,13 @@ namespace gishadev.tools.Audio
         [field: SerializeField] public MusicData[] MusicCollection { get; private set; }
         [field: SerializeField] public SFXData[] SFXCollection { get; private set; }
 
-        private const string MUSIC_ENUM_NAME = "MusicAudioEnum";
-        private const string SFX_ENUM_NAME = "SFXAudioEnum";
 
 #if UNITY_EDITOR
         // Enum auto generation method.
         public override void OnCollectionChanged()
         {
-            InitEnumForCollection(SFXCollection, SFXCollection.Select(x => x.Name), SFX_ENUM_NAME);
-            InitEnumForCollection(MusicCollection, MusicCollection.Select(x => x.Name), MUSIC_ENUM_NAME);
+            InitEnumForCollection(SFXCollection, SFXCollection.Select(x => x.Name), Constants.AUDIO_SFX_ENUM_NAME);
+            InitEnumForCollection(MusicCollection, MusicCollection.Select(x => x.Name), Constants.AUDIO_MUSIC_ENUM_NAME);
         }
 #endif
 
