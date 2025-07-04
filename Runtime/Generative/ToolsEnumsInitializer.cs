@@ -10,4 +10,5 @@ namespace gishadev.tools.Generative
         {
             Debug.Log("Custom package loaded in Editor!");
         }
+    }
 }
