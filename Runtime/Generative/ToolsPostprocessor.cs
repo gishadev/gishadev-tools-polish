@@ -1,55 +1,132 @@
-using System;
-using gishadev.tools.Core;
-using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using UnityEditor;
+using System;
+using System.IO;
+using gishadev.tools.Core;
 
 namespace gishadev.tools.Generative
 {
-    public class ToolsPostprocessor : AssetPostprocessor
+    [InitializeOnLoad]
+    public static class ToolsEnumsInitializer
     {
-        private const string PACKAGE_IDENTIFIER = "gishadev-tools-polish";
+        private const string PACKAGE_NAME = "gishadev-tools-polish";
         private const string PROCESSED_KEY = "GishaDevTools_EnumsGenerated";
+        private const string VERSION_KEY = "GishaDevTools_Version";
 
-        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets,
-            string[] movedAssets, string[] movedFromAssetPaths)
+        static ToolsEnumsInitializer()
         {
-            // Check if we've already processed this package
-            if (EditorPrefs.GetBool(PROCESSED_KEY, false))
-                return;
+            // Use EditorApplication.delayCall to ensure Unity is fully initialized
+            EditorApplication.delayCall += CheckForPackageImport;
+        }
 
-            bool packageDetected = false;
-
-            foreach (string assetPath in importedAssets)
+        private static void CheckForPackageImport()
+        {
+            try
             {
-                // Check if this is a package-related asset
-                if (IsPackageAsset(assetPath))
+                // Method 1: Check if this is the first time running after package import
+                if (!EditorPrefs.GetBool(PROCESSED_KEY, false))
                 {
-                    packageDetected = true;
-                    break;
+                    if (IsPackagePresent())
+                    {
+                        Debug.Log("Gisha Dev Tools package detected for the first time!");
+                        GenerateEnums();
+                        EditorPrefs.SetBool(PROCESSED_KEY, true);
+                        return;
+                    }
+                }
+
+                // Method 2: Check for version changes (if package was updated)
+                string currentVersion = GetPackageVersion();
+                string savedVersion = EditorPrefs.GetString(VERSION_KEY, "");
+
+                if (!string.IsNullOrEmpty(currentVersion) && currentVersion != savedVersion)
+                {
+                    Debug.Log($"Package version changed from {savedVersion} to {currentVersion}");
+                    GenerateEnums();
+                    EditorPrefs.SetString(VERSION_KEY, currentVersion);
                 }
             }
-
-            if (packageDetected)
+            catch (Exception ex)
             {
-                GenerateEnums();
-                EditorPrefs.SetBool(PROCESSED_KEY, true);
+                Debug.LogError($"Error checking for package import: {ex.Message}");
             }
         }
 
-        private static bool IsPackageAsset(string assetPath)
+        private static bool IsPackagePresent()
         {
-            // Check if the asset path contains the package identifier
-            return assetPath.Contains(PACKAGE_IDENTIFIER) ||
-                   assetPath.Contains("Packages/com.gishadev.tools") || // More specific package path
-                   assetPath.Contains("gishadev");
+            // Check multiple possible locations
+            string[] possiblePaths =
+            {
+                "Packages/com.gishadev.tools/package.json",
+                "Packages/com.gishadev.tools-polish/package.json",
+                "Assets/GishaDevTools/package.json"
+            };
+
+            foreach (string path in possiblePaths)
+            {
+                if (File.Exists(path))
+                {
+                    Debug.Log($"Found package at: {path}");
+                    return true;
+                }
+            }
+
+            // Alternative: Check for specific assets
+            string[] guids = AssetDatabase.FindAssets("t:Script", new[] { "Packages", "Assets" });
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (path.Contains(PACKAGE_NAME) || path.Contains("GishaDevTools"))
+                {
+                    Debug.Log($"Found package script at: {path}");
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static string GetPackageVersion()
+        {
+            string[] possiblePaths =
+            {
+                "Packages/com.gishadev.tools/package.json",
+                "Packages/com.gishadev.tools-polish/package.json",
+                "Assets/GishaDevTools/package.json"
+            };
+
+            foreach (string path in possiblePaths)
+            {
+                if (File.Exists(path))
+                {
+                    try
+                    {
+                        string json = File.ReadAllText(path);
+                        // Simple version extraction (you might want to use proper JSON parsing)
+                        var versionStart = json.IndexOf("\"version\":");
+                        if (versionStart != -1)
+                        {
+                            var versionEnd = json.IndexOf(",", versionStart);
+                            if (versionEnd == -1) versionEnd = json.IndexOf("}", versionStart);
+                            var versionString = json.Substring(versionStart, versionEnd - versionStart);
+                            return versionString;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogWarning($"Could not read version from {path}: {ex.Message}");
+                    }
+                }
+            }
+
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); // Fallback to timestamp
         }
 
         private static void GenerateEnums()
         {
             try
             {
-                Debug.Log("Generating enums for Gisha Dev Tools Polish package...");
+                Debug.Log("Generating enums for Gisha Dev Tools package...");
 
                 string[] enumValues = Array.Empty<string>();
 
@@ -61,29 +138,49 @@ namespace gishadev.tools.Generative
 
                 Debug.Log("Enums generated successfully!");
 
-                // Refresh the asset database to ensure the new enums are recognized
+                // Refresh the asset database
                 AssetDatabase.Refresh();
+
+                // Optional: Show a dialog to inform the user
+                EditorUtility.DisplayDialog("Gisha Dev Tools",
+                    "Package imported successfully!\nEnums have been generated.", "OK");
             }
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to generate enums: {ex.Message}");
+                EditorUtility.DisplayDialog("Error",
+                    $"Failed to generate enums: {ex.Message}", "OK");
             }
         }
 
-        // Optional: Add a menu item to manually regenerate enums
-        [MenuItem("Tools/Gisha Dev Tools/Regenerate Enums")]
-        private static void RegenerateEnums()
+        // Manual controls via menu
+        [MenuItem("Tools/Gisha Dev Tools/Force Generate Enums")]
+        private static void ForceGenerateEnums()
         {
-            EditorPrefs.SetBool(PROCESSED_KEY, false);
             GenerateEnums();
         }
 
-        // Optional: Add a menu item to reset the processed flag
-        [MenuItem("Tools/Gisha Dev Tools/Reset Package State")]
-        private static void ResetPackageState()
+        [MenuItem("Tools/Gisha Dev Tools/Reset Package Detection")]
+        private static void ResetPackageDetection()
         {
             EditorPrefs.DeleteKey(PROCESSED_KEY);
-            Debug.Log("Package state reset. Enums will be regenerated on next import.");
+            EditorPrefs.DeleteKey(VERSION_KEY);
+            Debug.Log(
+                "Package detection reset. Enums will be regenerated on next Unity restart or script recompilation.");
+        }
+
+        [MenuItem("Tools/Gisha Dev Tools/Check Package Status")]
+        private static void CheckPackageStatus()
+        {
+            bool isProcessed = EditorPrefs.GetBool(PROCESSED_KEY, false);
+            string version = EditorPrefs.GetString(VERSION_KEY, "Unknown");
+            bool isPresent = IsPackagePresent();
+
+            string message = $"Package Present: {isPresent}\n" +
+                             $"Enums Generated: {isProcessed}\n" +
+                             $"Version: {version}";
+
+            EditorUtility.DisplayDialog("Package Status", message, "OK");
         }
     }
 }
