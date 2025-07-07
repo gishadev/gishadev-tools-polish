@@ -8,7 +8,5 @@ namespace gishadev.tools.Audio
         void SetSFXVolume(float volumePercent);
         void SetMusicVolume(float volumePercent);
         void PlayAudio<T>(int index) where T : AudioData, new();
-        void PlayAudio(MusicAudioEnum enumEntry);
-        void PlayAudio(SFXAudioEnum enumEntry);
     }
 }

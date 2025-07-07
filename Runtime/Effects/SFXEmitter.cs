@@ -28,8 +28,5 @@ namespace gishadev.tools.Effects
 
             return obj;
         }
-
-        public GameObject EmitAt(SoundEffectsEnum enumEntry, Vector3 position, Quaternion rotation) =>
-            EmitAt((int) enumEntry, position, rotation);
     }
 }
