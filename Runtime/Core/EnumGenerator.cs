@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace gishadev.tools.Generative
+namespace gishadev.tools.core
 {
 #if UNITY_EDITOR
     public static class EnumGenerator
