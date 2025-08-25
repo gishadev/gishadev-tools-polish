@@ -32,6 +32,8 @@ namespace gishadev.tools.Pooling
     [System.Serializable]
     public class SFXPoolObject : PoolObject
     {
+        [field: SerializeField, Tooltip("Variations of Audio")] public AudioClip[] AudioClips { get; private set; }
+        
         public SFXPoolObject(GameObject prefab) : base(prefab)
         {
         }

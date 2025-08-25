@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gisha.Effects.Audio;
+using gishadev.tools.Core;
 using gishadev.tools.Pooling;
 using UnityEngine;
 
@@ -24,7 +25,16 @@ namespace gishadev.tools.Effects
 
             obj.transform.position = position;
             obj.transform.rotation = rotation;
-            obj.AddComponent<DisableSFXOnComplete>();
+
+            var audioSource = obj.GetOrAddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+
+            var poolObject = PoolObjectsCollection[index];
+            if (poolObject.AudioClips.Length > 0)
+                audioSource.clip = poolObject.AudioClips[Random.Range(0, poolObject.AudioClips.Length)];
+            
+            audioSource.Play();
+            obj.GetOrAddComponent<DisableSFXOnComplete>();
 
             return obj;
         }
