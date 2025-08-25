@@ -7,7 +7,7 @@ namespace gishadev.tools.UI
     public class ButtonBroadcaster : Broadcaster<Button>
     {
         [SerializeField] private string newValue;
-        [SerializeField] private DefaultEventChannelSO eventChannelSo;
+        [SerializeField] private StringEventChannelSO eventChannelSo;
 
         public virtual void OnEnable()
         {

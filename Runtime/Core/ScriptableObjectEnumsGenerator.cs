@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using gishadev.tools.core;
 using UnityEngine;
 
 namespace gishadev.tools.Core
@@ -23,7 +22,8 @@ namespace gishadev.tools.Core
                 list[i].SetEnumIndex(i);
             }
 
-            EnumGenerator.GenerateEnumClass(enumName, entries);
+            CodeGenerator.GenerateExtensionsClass();
+            CodeGenerator.GenerateEnumClass(enumName, entries);
         }
 #endif
     }

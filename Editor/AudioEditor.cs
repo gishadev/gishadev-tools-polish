@@ -1,58 +1,32 @@
 using gishadev.tools.Core;
 using gishadev.tools.Audio;
-using gishadev.tools.Pooling;
 using UnityEditor;
 using UnityEngine;
 
-namespace gishadev.tools.editor
+namespace gishadev.tools.Editor
 {
     [CustomEditor(typeof(AudioMasterSO))]
-    public class AudioEditor : Editor
+    public class AudioEditor : UnityEditor.Editor
     {
-        private AudioMasterSO _audioMaster;
+        private AudioMasterSO _audioMasterSO;
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            _audioMaster = (AudioMasterSO) target;
+            _audioMasterSO = (AudioMasterSO)target;
             EditorGUILayout.Space();
-            EditorDropAreaCreator<MusicData, AudioClip>.Create(_audioMaster, _audioMaster.MusicCollection);
+            EditorDropAreaCreator<MusicData, AudioClip>.Create(_audioMasterSO, _audioMasterSO.MusicCollection);
             EditorGUILayout.Space();
-            EditorDropAreaCreator<SFXData, AudioClip>.Create(_audioMaster, _audioMaster.SFXCollection);
+            EditorDropAreaCreator<SFXData, AudioClip>.Create(_audioMasterSO, _audioMasterSO.SFXCollection);
 
-            if (GUILayout.Button("Generate Enums"))
+            new PolishEditorStyles().CreateBigButton("GENERATE ENUMS", () =>
             {
-                var enumsGen = (ScriptableObjectEnumsGenerator) target;
+                var enumsGen = (ScriptableObjectEnumsGenerator)target;
                 enumsGen.OnCollectionChanged();
-            }
-        }
-    }
-
-    [CustomEditor(typeof(PoolDataSO))]
-    public class PoolEditor : Editor
-    {
-        private PoolDataSO _poolData;
-        
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-
-            _poolData = (PoolDataSO) target;
-            EditorGUILayout.Space();
-            EditorDropAreaCreator<SFXPoolObject, GameObject>.Create(_poolData, _poolData.SFXPoolObjects);
-            EditorGUILayout.Space();
-            EditorDropAreaCreator<VFXPoolObject, GameObject>.Create(_poolData, _poolData.VFXPoolObjects);
-            EditorGUILayout.Space();
-            EditorDropAreaCreator<OtherPoolObject, GameObject>.Create(_poolData, _poolData.OtherPoolObjects);
+            });
             
-            if (GUILayout.Button("Generate Enums"))
-            {
-                var enumsGen = (ScriptableObjectEnumsGenerator) target;
-                enumsGen.OnCollectionChanged();
-            }
-            
-            EditorUtility.SetDirty(_poolData);
+            EditorUtility.SetDirty(_audioMasterSO);
         }
     }
 }

@@ -7,6 +7,8 @@ namespace gishadev.tools.Audio
         event Action<AudioData> AudioStarted;
         void SetSFXVolume(float volumePercent);
         void SetMusicVolume(float volumePercent);
-        void PlayAudio<T>(int index) where T : AudioData, new();
+        
+        void PlaySFX(int index); 
+        void PlayMusic(int index);
     }
 }

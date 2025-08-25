@@ -3,14 +3,14 @@ using gishadev.tools.Core;
 using UnityEditor;
 using UnityEngine;
 
-namespace gishadev.tools.editor
+namespace gishadev.tools.Editor
 {
     /// <summary>
     /// Simple creator of dropdown areas for fast fill.
     /// </summary>
     /// <typeparam name="T">Data, which will be filled</typeparam>
     /// <typeparam name="U">Input object</typeparam>
-    public static class EditorDropAreaCreator<T, U> 
+    public static class EditorDropAreaCreator<T, U>
         where T : IDropdownTargetData, new()
         where U : class
     {
@@ -35,16 +35,12 @@ namespace gishadev.tools.editor
                         DragAndDrop.AcceptDrag();
 
                         foreach (Object draggedObject in DragAndDrop.objectReferences)
-                        {
                             if (draggedObject is U importKeyObject)
                                 dropdownHolder.OnDragNDropped(importKeyObject, targetCollection);
-                        }
                     }
 
                     break;
             }
-            
-            
         }
     }
 }

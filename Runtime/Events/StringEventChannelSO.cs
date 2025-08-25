@@ -2,8 +2,8 @@
 
 namespace gishadev.tools.Events
 {
-    [CreateAssetMenu(fileName = "VoidEventChannelSO", menuName = "ScriptableObjects/Events/VoidEventChannelSO")]
-    public class DefaultEventChannelSO : EventChannelSO<StringWrapper>
+    [CreateAssetMenu(fileName = "StringEventChannelSO", menuName = "ScriptableObjects/Events/StringEventChannelSO")]
+    public class StringEventChannelSO : EventChannelSO<StringWrapper>
     {
     }
     

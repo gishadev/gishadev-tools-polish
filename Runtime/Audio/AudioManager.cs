@@ -63,6 +63,9 @@ namespace gishadev.tools.Audio
             _musicVolumePercentage = volumePercent;
         }
 
+        public void PlaySFX(int index) => PlayAudio<SFXData>(index);
+        public void PlayMusic(int index) => PlayAudio<MusicData>(index);
+
         public void PlayAudio<T>(int index) where T : AudioData, new()
         {
             var audioCollection = GetAudioCollection<T>();
